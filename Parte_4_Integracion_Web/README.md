@@ -1,6 +1,23 @@
-# Parte 4 — Integración Web (AWS Lambda + API Gateway + S3)
+# Parte 4 — Integración Web (S3 + CloudFront)
 
 Sitio web que integra los tres puntos anteriores. Es **el entregable principal**: la sustentación se hace recorriendo este sitio.
+
+## Arquitectura
+
+```
+┌──────────────────────┐
+│  Frontend (S3 +      │   fetch() directo a 3 ngrok URLs
+│  CloudFront)         │ ───┬─────────┬──────────────┐
+└──────────────────────┘    ▼         ▼              ▼
+                       ┌────────┐ ┌────────┐  ┌──────────┐
+                       │ Ollama │ │Generator│  │Diffusion │
+                       │SageMkr │ │SageMkr  │  │ Colab T4 │
+                       │ :11434 │ │ :8000   │  │  :8000   │
+                       └────────┘ └────────┘  └──────────┘
+                            ngrok    ngrok       ngrok
+```
+
+**Decisión clave**: el modelo del generador NO se sirve desde Lambda. Se sirve desde la **misma instancia de SageMaker** que aloja Ollama, vía FastAPI + ngrok. Esto simplifica la arquitectura y elimina la complejidad de empacar PyTorch en una imagen de Lambda.
 
 ## Entregables
 
@@ -8,68 +25,62 @@ Sitio web que integra los tres puntos anteriores. Es **el entregable principal**
    - **Descripción del modelo**: arquitectura, hiperparámetros, learning curves, métricas (loss/perplejidad por celda).
    - **Sección de ejemplos**: tabla con los 10 nombres + descripciones + imágenes.
    - **Sección interactiva**: botón "Nuevo Dinosaurio" → genera nombre, descripción e imagen en vivo.
-2. **Backend Lambda** (container image en ECR) con `best_model.pt` empacado.
-3. **API Gateway** con CORS habilitado.
-4. Endpoints de Ollama y difusión expuestos vía ngrok (no van en AWS).
+2. Configuración de S3 + CloudFront (bucket público, distribución, invalidaciones).
 
 ## Estructura
 
 ```
 Parte_4_Integracion_Web/
-├── lambda/
-│   ├── Dockerfile          # base public.ecr.aws/lambda/python:3.11 + torch CPU + best_model.pt
-│   ├── handler.py          # FastAPI + Mangum
-│   ├── inference.py        # carga best_model.pt + sample
-│   ├── schemas.py          # Pydantic
-│   ├── requirements.txt
-│   └── deploy.sh           # docker build + ECR push + lambda update-function-code
-├── web/
-│   ├── index.html          # 3 secciones
-│   ├── styles.css
-│   ├── app.js              # fetch(API_GATEWAY_URL + "/new-dinosaur")
-│   ├── examples.json       # 10 nombres + descripciones + URLs de imágenes
-│   └── deploy_s3.sh        # aws s3 sync + create-invalidation
-└── infra/
-    ├── api_gateway.yaml    # OpenAPI/SAM template
-    └── lambda_iam_policy.json  # solo logs CloudWatch
+└── web/
+    ├── index.html          # 3 secciones
+    ├── styles.css
+    ├── app.js              # fetch directo a las 3 ngrok URLs (sin Lambda)
+    ├── config.js           # URLs de ngrok (no commitear con valores reales)
+    ├── examples.json       # 10 nombres + descripciones + URLs S3 de imágenes
+    └── deploy_s3.sh        # aws s3 sync + cloudfront create-invalidation
 ```
 
-## Endpoints
+## Endpoints que consume el frontend
 
-| Endpoint | Request | Response |
-|---|---|---|
-| `GET /health` | — | `{"status": "ok"}` |
-| `POST /generate` | `{"temperature": 1.0, "top_p": 0.9, "top_k": null}` | `{"name": "mangosaurus"}` |
-| `POST /describe` | `{"name": "mangosaurus"}` | `{"name": ..., "description": ...}` |
-| `POST /image` | `{"name": ..., "description": ...}` | `{"image_url": "https://.../mangosaurus.png"}` |
-| `POST /new-dinosaur` | `{}` | `{"name": ..., "description": ..., "image_url": ...}` |
+Todos vía ngrok (no AWS API Gateway, no Lambda).
+
+| Endpoint | Origen | Request | Response |
+|---|---|---|---|
+| `POST /generate` | SageMaker (FastAPI) | `{"temperature":1.0,"top_p":0.9,"top_k":null}` | `{"name":"mangosaurus"}` |
+| `POST /api/generate` | SageMaker (Ollama) | prompt paleontológico con el nombre | `{"response":"..."}` |
+| `POST /image` | Colab (FastAPI) | `{"name":"...","description":"..."}` | `{"image_url":"..."}` |
+
+El botón "Nuevo Dinosaurio" hace los **3 fetches en cascada** desde el navegador (sin orquestador intermedio). Cada uno puede tardar; el frontend muestra spinner hasta que llega la imagen.
+
+## ¿Por qué CORS funciona?
+
+ngrok responde con headers CORS permisivos por defecto. Si en algún momento se bloqueara, hay que agregar `--response-header-add 'Access-Control-Allow-Origin: *'` al comando ngrok.
 
 ## Configuración crítica
 
-- **Lambda timeout**: 30 s (el límite duro de API Gateway es 29 s).
-- **Lambda memory**: 2048 MB (mejora notablemente el throughput de PyTorch en CPU).
-- **CORS**: habilitado en API Gateway para que el frontend (S3/CloudFront) pueda llamar.
-- **URLs de ngrok**: viven como variables de entorno de la Lambda (`OLLAMA_NGROK_URL`, `DIFFUSION_NGROK_URL`). Rotan al reiniciar los túneles → actualizar con `aws lambda update-function-configuration`.
+- **CloudFront**: TTL bajo (300 s) para que `examples.json` y los assets se actualicen rápido tras un deploy.
+- **S3 bucket**: política pública para `*.png` (las imágenes de Colab) y para los archivos del sitio.
+- **Las URLs de ngrok rotan cada ~2 h en plan free**: hay que actualizar `web/config.js` y volver a desplegar, o usar el archivo `examples.json` para los ejemplos estáticos (que no dependen de ngrok).
 
 ## Cómo desplegar
 
 ```bash
-# backend
-bash Parte_4_Integracion_Web/lambda/deploy.sh
-
-# frontend
+# desde la raíz del repo
+S3_BUCKET=dino-lab-frontend \
+CLOUDFRONT_DISTRIBUTION=E1XXXXXXXXXX \
 bash Parte_4_Integracion_Web/web/deploy_s3.sh
 ```
 
 ## Cómo verificar
 
-```bash
-# health check
-curl https://<api-id>.execute-api.us-east-1.amazonaws.com/prod/health
+1. Abrir la URL de CloudFront en el navegador.
+2. Sección **Modelo**: ver curvas de aprendizaje y la tabla con métricas reales.
+3. Sección **Ejemplos**: ver los 10 dinosaurios generados con sus imágenes.
+4. Sección **Interactiva**: click en "Nuevo Dinosaurio" → spinner → en menos de 60 s aparece nombre + descripción + imagen.
 
-# end-to-end
-curl -X POST https://<api-id>.execute-api.us-east-1.amazonaws.com/prod/new-dinosaur \
-     -H "Content-Type: application/json" -d '{}'
-```
+Si el botón falla:
 
-Después abrir la URL de CloudFront, click en "Nuevo Dinosaurio" → debe ver nombre + descripción + imagen en menos de 30 s.
+- Abrir DevTools → Network → ver cuál fetch tronó.
+- Si es `/generate`: la URL de ngrok del generador está caída → revisar SageMaker.
+- Si es `/api/generate`: Ollama caído → revisar SageMaker.
+- Si es `/image`: Colab caído → reabrir el notebook y reconectar el túnel.

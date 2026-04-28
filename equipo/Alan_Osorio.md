@@ -2,12 +2,14 @@
 
 ## Resumen
 
-Te toca la **variante RNN simple** del generador y **toda la infraestructura AWS** que sostiene la Parte 4. Eres el responsable de que el sitio web funcione end-to-end.
+Te toca la **variante RNN simple** del generador, **el código del FastAPI que sirve el modelo** (corre en SageMaker), y **el hosting estático en AWS** (S3 + CloudFront).
+
+> **Cambio de arquitectura**: ya no hay Lambda + API Gateway. El generador se expone vía FastAPI dentro de SageMaker (mismo host que Ollama), y el frontend en S3 llama directo a las URLs de ngrok.
 
 ## Partes en las que estás involucrado
 
-- **Parte 1** (variante RNN): tu notebook personal.
-- **Parte 4** (integración web): owner del backend Lambda y del despliegue.
+- **Parte 1** (variante RNN + FastAPI del generador).
+- **Parte 4** (hosting frontend en S3 + CloudFront).
 
 ---
 
@@ -20,10 +22,10 @@ Te toca la **variante RNN simple** del generador y **toda la infraestructura AWS
 
 ### Checklist
 
-- [ ] Esperar a que `01_preprocessing.ipynb` esté listo (compartido) o ayudar a armarlo.
-- [ ] Crear `02_rnn_AlanOsorio.ipynb`, importar `CharRNN(cell_type='rnn')` desde `src.model`.
+- [ ] Esperar `01_preprocessing.ipynb` listo (compartido).
+- [ ] Crear `02_rnn_AlanOsorio.ipynb`, importar `CharRNN(cell_type='rnn')`.
 - [ ] Entrenar 30–50 épocas, registrar en MLflow con `run_name="RNN_AlanOsorio"`.
-- [ ] Reportar en el notebook: loss curves, perplejidad, ejemplo de 5 nombres muestreados.
+- [ ] Reportar: loss curves, perplejidad, ejemplo de 5 nombres muestreados.
 - [ ] Si tu modelo es el mejor, copiar el checkpoint a `Parte_1_Generador_Caracteres/models/best_model.pt`.
 
 ### Hiperparámetros sugeridos
@@ -34,39 +36,50 @@ Te toca la **variante RNN simple** del generador y **toda la infraestructura AWS
 
 ---
 
-## Parte 4 — Backend Lambda + AWS Infra
+## Parte 1 (cont.) — FastAPI del generador
 
-Eres el dueño de toda la subcarpeta [Parte_4_Integracion_Web/](../Parte_4_Integracion_Web/) **excepto el frontend** (eso es de Santiago).
+Eres dueño del código que expone el modelo vía HTTP.
 
-### Archivos que vas a crear
+### Archivos que vas a tocar
 
-- [Parte_4_Integracion_Web/lambda/Dockerfile](../Parte_4_Integracion_Web/lambda/Dockerfile)
-- [Parte_4_Integracion_Web/lambda/handler.py](../Parte_4_Integracion_Web/lambda/handler.py) — FastAPI + `mangum.Mangum(app)`.
-- [Parte_4_Integracion_Web/lambda/inference.py](../Parte_4_Integracion_Web/lambda/inference.py) — carga `best_model.pt` en memoria global.
-- [Parte_4_Integracion_Web/lambda/schemas.py](../Parte_4_Integracion_Web/lambda/schemas.py) — Pydantic.
-- [Parte_4_Integracion_Web/lambda/requirements.txt](../Parte_4_Integracion_Web/lambda/requirements.txt) — `torch --index-url ...cpu`, `fastapi`, `mangum`, `requests`.
-- [Parte_4_Integracion_Web/lambda/deploy.sh](../Parte_4_Integracion_Web/lambda/deploy.sh) — build + ECR push + `lambda update-function-code`.
-- [Parte_4_Integracion_Web/infra/api_gateway.yaml](../Parte_4_Integracion_Web/infra/api_gateway.yaml) — OpenAPI o SAM template.
-- [Parte_4_Integracion_Web/infra/lambda_iam_policy.json](../Parte_4_Integracion_Web/infra/lambda_iam_policy.json) — permisos mínimos.
+- [Parte_1_Generador_Caracteres/api/main.py](../Parte_1_Generador_Caracteres/api/main.py) — ya está el esqueleto. Tu trabajo es endurecerlo.
 
 ### Checklist
 
-- [ ] Crear repositorio ECR (`aws ecr create-repository --repository-name dino-lab`).
-- [ ] Escribir `Dockerfile` basado en `public.ecr.aws/lambda/python:3.11`. **Verificar que el tamaño total < 10 GB** (PyTorch CPU pesa ~600 MB).
-- [ ] Implementar los 5 endpoints (`/health`, `/generate`, `/describe`, `/image`, `/new-dinosaur`) con FastAPI.
-- [ ] `/describe` y `/image` son proxies a `OLLAMA_NGROK_URL` y `DIFFUSION_NGROK_URL` (env vars).
-- [ ] Crear API Gateway REST API, método `ANY` proxy a Lambda, **CORS habilitado**.
-- [ ] Configurar Lambda: `timeout=30`, `memory=2048`, env vars con las URLs de ngrok.
-- [ ] Habilitar CloudFront delante del bucket S3 que pondrá Santiago.
-- [ ] Probar end-to-end: `curl POST /new-dinosaur` debe devolver nombre+descripción+imagen en < 30 s.
+- [ ] Leer `main.py` y verificar que `/generate` y `/health` funcionen localmente:
+  ```bash
+  uvicorn Parte_1_Generador_Caracteres.api.main:app --port 8000
+  curl -X POST http://localhost:8000/generate -H 'Content-Type: application/json' \
+       -d '{"n":3,"temperature":1.0,"top_p":0.9}'
+  ```
+- [ ] Agregar logging estructurado (en `/var/log/dino-api.log`).
+- [ ] Validar que CORS responde a OPTIONS preflight desde el dominio de CloudFront.
+- [ ] Documentar el contrato del endpoint en el README de Parte 1.
+- [ ] Coordinar con **Juan Camilo** la subida del `best_model.pt` a `/home/ec2-user/SageMaker/models/` en la instancia.
+
+---
+
+## Parte 4 — Frontend hosting (S3 + CloudFront)
+
+### Archivos que vas a tocar
+
+- [Parte_4_Integracion_Web/web/deploy_s3.sh](../Parte_4_Integracion_Web/web/deploy_s3.sh) — ya está el script base.
+- (Crear) Plantilla CloudFormation/Terraform o pasos manuales documentados para crear: bucket S3 público + distribución CloudFront + (opcional) Route53.
+
+### Checklist
+
+- [ ] Crear bucket S3 (`dino-lab-frontend-<sufijo>`), habilitar static website hosting, política pública para `*.html, *.css, *.js, *.json, *.png`.
+- [ ] Crear distribución CloudFront frente al bucket. TTL bajo (300 s) para iterar rápido.
+- [ ] Probar `deploy_s3.sh` con `S3_BUCKET=... CLOUDFRONT_DISTRIBUTION=...`.
+- [ ] Validar HTTPS (CloudFront default cert), latencia, y que los headers CORS no se rompan al servir el sitio.
+- [ ] Documentar en `Parte_4_Integracion_Web/README.md` los IDs/nombres de los recursos AWS creados (en una sección "Recursos provisionados").
 
 ### Dependencias de otros
 
-- Necesitas `models/best_model.pt` listo (Parte 1) — coordínate con quien gane el podio entre RNN/LSTM/GRU.
-- Necesitas `OLLAMA_NGROK_URL` (Juan Camilo) y `DIFFUSION_NGROK_URL` (Santiago) para configurar la Lambda.
+- El **frontend en sí** lo escribe Santiago. Tú solo hosteas.
+- Necesitas las URLs de ngrok de **Juan Camilo** (Ollama + generador) y de **Santiago** (difusión Colab) para llenar `web/config.js` antes del deploy.
 
 ### Coordinaciones críticas
 
-- **Antes de cambiar la firma de un endpoint**: avisar a Santiago (frontend) en el mismo PR.
-- **Antes de redeploy**: avisar al equipo, el endpoint queda fuera ~30 s.
-- **Si las URLs de ngrok rotan**: ejecutar `aws lambda update-function-configuration --environment Variables={OLLAMA_NGROK_URL=...,DIFFUSION_NGROK_URL=...}`.
+- **Antes de cambiar la firma del FastAPI** (`/generate`): avisar a Santiago en el mismo PR — el frontend lo consume.
+- **Si las URLs de ngrok rotan**: editar `web/config.js` y volver a correr `deploy_s3.sh`.

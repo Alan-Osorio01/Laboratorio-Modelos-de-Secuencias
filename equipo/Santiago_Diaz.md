@@ -68,13 +68,16 @@ Eres el dueño de toda la subcarpeta [Parte_3_Difusion_Imagenes/](../Parte_3_Dif
 
 ## Parte 4 — Frontend del sitio web
 
-### Archivos que vas a crear
+### Archivos que vas a tocar
+
+Ya están creados, tu trabajo es completarlos con datos reales y validarlos:
 
 - [Parte_4_Integracion_Web/web/index.html](../Parte_4_Integracion_Web/web/index.html) — 3 secciones (modelo, ejemplos, interactiva).
 - [Parte_4_Integracion_Web/web/styles.css](../Parte_4_Integracion_Web/web/styles.css)
-- [Parte_4_Integracion_Web/web/app.js](../Parte_4_Integracion_Web/web/app.js) — `fetch(API_GATEWAY_URL + "/new-dinosaur")`.
+- [Parte_4_Integracion_Web/web/app.js](../Parte_4_Integracion_Web/web/app.js) — orquesta los 3 fetches en cascada (`/generate` SageMaker → `/api/generate` Ollama → `/image` Colab). **Sin Lambda intermedio.**
+- [Parte_4_Integracion_Web/web/config.js](../Parte_4_Integracion_Web/web/config.js) — URLs de ngrok (Juan Camilo te pasa 2; tú agregas la del Colab).
 - [Parte_4_Integracion_Web/web/examples.json](../Parte_4_Integracion_Web/web/examples.json) — 10 nombres + descripciones + URLs S3 de imágenes.
-- [Parte_4_Integracion_Web/web/deploy_s3.sh](../Parte_4_Integracion_Web/web/deploy_s3.sh) — `aws s3 sync` + `cloudfront create-invalidation`.
+- [Parte_4_Integracion_Web/web/deploy_s3.sh](../Parte_4_Integracion_Web/web/deploy_s3.sh) — `aws s3 sync` + `cloudfront create-invalidation` (lo opera Alan, pero tú lo pruebas).
 
 ### Checklist
 
@@ -90,6 +93,7 @@ Eres el dueño de toda la subcarpeta [Parte_3_Difusion_Imagenes/](../Parte_3_Dif
 
 ### Coordinaciones críticas
 
-- **Antes de cambiar la firma del fetch**: avisar a Alan (backend Lambda) en el mismo PR.
-- **CORS**: si el navegador rechaza la llamada, es problema del API Gateway (avisar a Alan).
+- **Antes de cambiar la firma de un fetch**: avisar a Alan (FastAPI del generador) o a Juan Camilo (prompt de Ollama) según corresponda, en el mismo PR.
+- **CORS**: si el navegador rechaza la llamada a ngrok, agregar `--response-header-add 'Access-Control-Allow-Origin: *'` al comando ngrok (avisar a Juan Camilo / Santiago según el túnel).
+- **URLs de ngrok rotan**: cuando alguien notifica que cambiaron, editar `web/config.js` y pedirle a Alan un redeploy.
 - **Sustentación**: el sitio que tú haces es lo que el profesor va a calificar — pruébalo bien antes del día.

@@ -1,0 +1,11 @@
+torch>=2.1
+numpy
+pandas
+matplotlib
+mlflow
+requests
+fastapi
+uvicorn
+pydantic>=2
+python-dotenv
+nbstripout

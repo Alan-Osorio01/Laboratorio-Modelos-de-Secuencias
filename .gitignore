@@ -1,0 +1,30 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+.pytest_cache/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# MLflow
+mlruns/
+
+# Modelos pesados (descomentar si pasan de 50 MB y no usas Git LFS)
+# Parte_1_Generador_Caracteres/models/*.pt
+
+# Imágenes generadas (viven en S3, no en git)
+data/generated/images/
+*.zip
+
+# Entornos / secretos
+.env
+.env.*
+!.env.example
+
+# Editor
+.vscode/
+.idea/
+.DS_Store

@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Isla de los Dinosaurios — Generador con RNN</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="hero">
+    <h1>Isla de los Dinosaurios</h1>
+    <p class="subtitle">Generador de nombres con redes neuronales recurrentes a nivel de carácter</p>
+    <p class="byline">Alan Osorio · Juan Camilo Gallardo · Santiago Diaz</p>
+  </header>
+
+  <nav class="tabs">
+    <a href="#modelo">Modelo</a>
+    <a href="#ejemplos">Ejemplos</a>
+    <a href="#interactivo">Nuevo dinosaurio</a>
+  </nav>
+
+  <main>
+    <!-- ============================================================ -->
+    <section id="modelo" class="card">
+      <h2>Descripción del modelo</h2>
+
+      <h3>Arquitectura</h3>
+      <p>
+        <code>CharRNN</code> autorregresivo: <code>Embedding(29, 32)</code> → celda recurrente
+        (RNN / LSTM / GRU, <code>hidden=128</code>, 1 capa) → <code>Linear(128, 29)</code>.
+        Vocabulario fijo: <code>a–z</code> + tokens especiales <code>&lt;PAD&gt;</code>,
+        <code>&lt;SOS&gt;</code>, <code>&lt;EOS&gt;</code>.
+      </p>
+
+      <h3>Datos</h3>
+      <p>1 536 nombres reales de dinosaurios (<code>dinos.csv</code>). Se filtran a minúsculas
+        y solo letras a–z. <code>T = max(len) + 2</code> para incluir SOS/EOS.</p>
+
+      <h3>Entrenamiento</h3>
+      <p>
+        <code>CrossEntropyLoss(ignore_index=PAD)</code> sobre <code>X = [x₀..x_{T-1}]</code>,
+        <code>Y = [x₁..x_T]</code>. Adam <code>lr=1e-3</code>, batch 64, hasta 50 épocas con
+        early stopping (<code>patience=5</code>).
+      </p>
+
+      <h3>Comparación de celdas</h3>
+      <table class="metrics" id="metrics-table">
+        <thead>
+          <tr><th>Celda</th><th>Autor</th><th>Val loss</th><th>Perplejidad</th><th>Épocas</th></tr>
+        </thead>
+        <tbody>
+          <!-- Reemplazar con métricas reales tras entrenar -->
+          <tr><td>RNN</td><td>Alan Osorio</td><td>—</td><td>—</td><td>—</td></tr>
+          <tr><td>LSTM</td><td>Juan Camilo Gallardo</td><td>—</td><td>—</td><td>—</td></tr>
+          <tr><td>GRU</td><td>Santiago Diaz</td><td>—</td><td>—</td><td>—</td></tr>
+        </tbody>
+      </table>
+
+      <h3>Curvas de aprendizaje</h3>
+      <img id="learning-curves" src="learning_curves.png"
+           alt="Learning curves de RNN/LSTM/GRU"
+           onerror="this.style.display='none'" />
+
+      <h3>Muestreo</h3>
+      <p>
+        Generación autorregresiva desde <code>&lt;SOS&gt;</code> con tres palancas:
+        <strong>temperature</strong> (escala los logits),
+        <strong>top-k</strong> (mantiene los k más probables),
+        <strong>top-p / nucleus</strong> (mantiene la masa acumulada hasta p).
+        Recomendación final: <code>T=1.0, top_p=0.9</code> — balance entre originalidad y plausibilidad.
+      </p>
+    </section>
+
+    <!-- ============================================================ -->
+    <section id="ejemplos" class="card">
+      <h2>Ejemplos generados</h2>
+      <p>10 nombres seleccionados del barrido completo, descritos por un LLM local
+        (<code>gemma2:2b</code> vía Ollama) e ilustrados con difusión (<code>amused-512</code>).</p>
+      <div id="examples-grid" class="grid">
+        <p class="muted">Cargando ejemplos…</p>
+      </div>
+    </section>
+
+    <!-- ============================================================ -->
+    <section id="interactivo" class="card">
+      <h2>Nuevo dinosaurio</h2>
+      <p>Genera un nombre, su descripción y una ilustración en vivo. Puede tardar hasta 30 segundos
+        (cadena de Lambda → Ollama → modelo de difusión).</p>
+      <button id="new-dino-btn" class="primary">🦕 Generar nuevo dinosaurio</button>
+      <p id="status" class="muted" style="margin-top:0.6rem;font-size:0.9rem;"></p>
+      <div id="result" class="result hidden">
+        <h3 id="result-name"></h3>
+        <p id="result-description"></p>
+        <img id="result-image" alt="" />
+      </div>
+      <p id="result-error" class="error hidden"></p>
+    </section>
+  </main>
+
+  <footer>
+    <p>Laboratorio Modelos de Secuencias — NLP · Universidad</p>
+  </footer>
+
+  <script src="config.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
