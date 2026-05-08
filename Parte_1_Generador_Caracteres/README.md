@@ -64,3 +64,54 @@ python -m Parte_1_Generador_Caracteres.src.sample \
     --checkpoint Parte_1_Generador_Caracteres/models/best_model.pt \
     --n 10 --temperature 1.0 --top-p 0.9
 ```
+
+## FastAPI — contrato del endpoint
+
+El servicio se expone desde SageMaker vía `uvicorn` + ngrok. El frontend lo llama directamente.
+
+### `GET /health`
+
+Respuesta `200 OK`:
+
+```json
+{"status": "ok", "cell_type": "rnn", "device": "cpu"}
+```
+
+Respuesta `503` si el checkpoint no se puede cargar.
+
+### `POST /generate`
+
+**Request** (todos los campos son opcionales):
+
+```json
+{
+  "n": 1,
+  "temperature": 1.0,
+  "top_k": null,
+  "top_p": 0.9
+}
+```
+
+| Campo | Tipo | Rango | Descripción |
+| --- | --- | --- | --- |
+| `n` | int | 1–20 | Cantidad de nombres a generar |
+| `temperature` | float | > 0 | Temperatura del muestreo |
+| `top_k` | int \| null | ≥ 1 | Filtro top-k (null = desactivado) |
+| `top_p` | float \| null | (0, 1] | Filtro nucleus (null = desactivado) |
+
+**Response** `200 OK`:
+
+```json
+{"names": ["velocirapnox"]}
+```
+
+**Response** `500` si no se pudieron generar nombres únicos tras los intentos máximos.
+
+### Variables de entorno
+
+| Variable | Default | Descripción |
+| --- | --- | --- |
+| `CHECKPOINT` | `/home/ec2-user/SageMaker/models/best_model.pt` | Ruta al checkpoint PyTorch |
+| `DATA_CSV` | `/home/ec2-user/SageMaker/data/dinos.csv` | CSV con nombres reales (para filtrar duplicados) |
+| `DEVICE` | auto-detect | `cpu` o `cuda` |
+| `LOG_FILE` | `/var/log/dino-api.log` | Log estructurado (JSON por línea) |

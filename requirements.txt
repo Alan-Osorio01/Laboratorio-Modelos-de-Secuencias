@@ -9,3 +9,4 @@ uvicorn
 pydantic>=2
 python-dotenv
 nbstripout
+boto3
