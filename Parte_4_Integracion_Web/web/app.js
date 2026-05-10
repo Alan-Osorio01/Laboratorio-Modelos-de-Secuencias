@@ -68,7 +68,7 @@ async function fetchDescription(name) {
   });
   if (!res.ok) throw new Error(`ollama: HTTP ${res.status}`);
   const data = await res.json();
-  return (data.response || "").trim();
+  return (data.response || "").trim().replace(/\*/g, "");
 }
 
 async function fetchImage(name, description) {

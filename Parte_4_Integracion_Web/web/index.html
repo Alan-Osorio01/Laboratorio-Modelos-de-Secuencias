@@ -49,17 +49,27 @@
           <tr><th>Celda</th><th>Autor</th><th>Val loss</th><th>Perplejidad</th><th>Épocas</th></tr>
         </thead>
         <tbody>
-          <!-- Reemplazar con métricas reales tras entrenar -->
-          <tr><td>RNN</td><td>Alan Osorio</td><td>—</td><td>—</td><td>—</td></tr>
-          <tr><td>LSTM</td><td>Juan Camilo Gallardo</td><td>—</td><td>—</td><td>—</td></tr>
-          <tr><td>GRU</td><td>Santiago Diaz</td><td>—</td><td>—</td><td>—</td></tr>
+          <tr><td>RNN</td><td>Alan Osorio</td><td>1.4908</td><td>4.44</td><td>≤50</td></tr>
+          <tr><td>LSTM</td><td>Juan Camilo Gallardo</td><td>1.4853</td><td>4.42</td><td>≤50</td></tr>
+          <tr><td><strong>GRU ✓</strong></td><td>Santiago Diaz</td><td><strong>1.4774</strong></td><td><strong>4.38</strong></td><td>≤50</td></tr>
         </tbody>
       </table>
 
       <h3>Curvas de aprendizaje</h3>
-      <img id="learning-curves" src="learning_curves.png"
-           alt="Learning curves de RNN/LSTM/GRU"
-           onerror="this.style.display='none'" />
+      <div style="display:flex;gap:1rem;flex-wrap:wrap;">
+        <figure style="margin:0;flex:1;min-width:220px">
+          <img src="learning_curves_rnn.png" alt="RNN" style="width:100%;border-radius:6px" onerror="this.parentElement.style.display='none'" />
+          <figcaption style="text-align:center;font-size:0.8rem;color:#888">RNN</figcaption>
+        </figure>
+        <figure style="margin:0;flex:1;min-width:220px">
+          <img src="learning_curves_lstm.png" alt="LSTM" style="width:100%;border-radius:6px" onerror="this.parentElement.style.display='none'" />
+          <figcaption style="text-align:center;font-size:0.8rem;color:#888">LSTM</figcaption>
+        </figure>
+        <figure style="margin:0;flex:1;min-width:220px">
+          <img src="learning_curves_gru.png" alt="GRU" style="width:100%;border-radius:6px" onerror="this.parentElement.style.display='none'" />
+          <figcaption style="text-align:center;font-size:0.8rem;color:#888">GRU ✓ ganador</figcaption>
+        </figure>
+      </div>
 
       <h3>Muestreo</h3>
       <p>
@@ -85,7 +95,7 @@
     <section id="interactivo" class="card">
       <h2>Nuevo dinosaurio</h2>
       <p>Genera un nombre, su descripción y una ilustración en vivo. Puede tardar hasta 30 segundos
-        (cadena de Lambda → Ollama → modelo de difusión).</p>
+        (CharRNN → Ollama gemma2:2b → Pollinations.ai).</p>
       <button id="new-dino-btn" class="primary">🦕 Generar nuevo dinosaurio</button>
       <p id="status" class="muted" style="margin-top:0.6rem;font-size:0.9rem;"></p>
       <div id="result" class="result hidden">

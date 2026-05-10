@@ -1,1 +1,52 @@
-[]
+[
+  {
+    "name": "galatitan",
+    "description": "Galatitan habitó las llanuras costeras del Cretácico tardío en América del Sur, alcanzando los 18 metros de longitud. Era un saurópodo de cuello largo con vértebras cervicales bifurcadas que reducían el peso sin sacrificar rigidez. Se alimentaba de helechos arborescentes y coníferas de dosel alto. Su rasgo más llamativo era una cresta nasal ósea que amplificaba los llamados de comunicación entre manadas.",
+    "image_url": "https://image.pollinations.ai/prompt/A%20paleo-illustration%20of%20a%20sauropod%20named%20Galatitan%2C%20long%20neck%2C%20Cretaceous%20coastal%20plains%2C%20realistic%20museum%20diorama%20style%2C%20full%20body%2C%20neutral%20background%2C%20no%20text?width=512&height=512&nologo=true&seed=101"
+  },
+  {
+    "name": "ambriceratops",
+    "description": "Ambriceratops vivió durante el Cretácico tardío en los bosques tropicales de América Central. Era un ceratópsido de 8 metros con tres cuernos frontales y una voluminosa gorguera ósea de bordes ondulados con función exhibicionista. Su constitución robusta lo convertía en un herbívoro dominante capaz de derribar vegetación densa con el hocico cornificado.",
+    "image_url": "https://image.pollinations.ai/prompt/A%20paleo-illustration%20of%20a%20ceratopsid%20named%20Ambriceratops%2C%20three%20horns%2C%20tropical%20forest%2C%20Cretaceous%2C%20realistic%20museum%20diorama%20style%2C%20full%20body%2C%20neutral%20background%2C%20no%20text?width=512&height=512&nologo=true&seed=202"
+  },
+  {
+    "name": "scampolosaurus",
+    "description": "Scampolosaurus fue un ornitópodo bípedo del Jurásico tardío de Europa occidental, con 6 metros de longitud y extremidades posteriores largas adaptadas para la carrera. Su dentición en mosaico procesaba helechos con gran eficiencia. Los registros fósiles revelan que vivía en grupos familiares de hasta 20 individuos, inusual para un dinosaurio de su época.",
+    "image_url": "https://image.pollinations.ai/prompt/A%20paleo-illustration%20of%20an%20ornithopod%20named%20Scampolosaurus%2C%20bipedal%2C%20Jurassic%20forest%20Europe%2C%20realistic%20museum%20diorama%20style%2C%20full%20body%2C%20neutral%20background%2C%20no%20text?width=512&height=512&nologo=true&seed=303"
+  },
+  {
+    "name": "ricellisaurus",
+    "description": "Ricellisaurus era un saurópodo del Triásico tardío de Gondwana con 12 metros y cuello moderadamente alargado. Sus fosas nasales elevadas sugieren hábitos semiacuáticos para eludir predadores. El hallazgo de nidos comunales indica que las hembras coordinaban la puesta en sitios con temperatura geotérmica estable.",
+    "image_url": "https://image.pollinations.ai/prompt/A%20paleo-illustration%20of%20a%20sauropod%20named%20Ricellisaurus%2C%20Triassic%20wetlands%20Gondwana%2C%20realistic%20museum%20diorama%20style%2C%20full%20body%2C%20neutral%20background%2C%20no%20text?width=512&height=512&nologo=true&seed=404"
+  },
+  {
+    "name": "veloniraptor",
+    "description": "Veloniraptor fue un dromeosáurido del Cretácico temprano de Asia Central, con 2 metros y plumaje pardo rojizo. La garra en hoz del segundo dedo medía 12 cm y sujetaba presas vivas mientras las mandíbulas completaban la captura. Análisis isotópicos de sus dientes indican que cazaba tanto en zonas boscosas como en praderas abiertas, lo que evidencia notable plasticidad ecológica.",
+    "image_url": "https://image.pollinations.ai/prompt/A%20paleo-illustration%20of%20a%20dromaeosaurid%20named%20Veloniraptor%2C%20feathered%2C%20sickle%20claw%2C%20Cretaceous%20Asia%2C%20realistic%20museum%20diorama%20style%2C%20full%20body%2C%20neutral%20background%2C%20no%20text?width=512&height=512&nologo=true&seed=505"
+  },
+  {
+    "name": "kronodon",
+    "description": "Kronodon fue un terópodo carnívoro del Jurásico medio de África del Norte, con 7 metros y dientes en forma de D con serración distal fina. Sus grandes órbitas indican actividad crepuscular. Huellas fósiles en Marruecos muestran que perseguía presas en grupos coordinados de tres a cinco individuos.",
+    "image_url": "https://image.pollinations.ai/prompt/A%20paleo-illustration%20of%20a%20theropod%20named%20Kronodon%2C%20large%20eyes%2C%20Jurassic%20North%20Africa%2C%20carnivore%2C%20realistic%20museum%20diorama%20style%2C%20full%20body%2C%20neutral%20background%2C%20no%20text?width=512&height=512&nologo=true&seed=606"
+  },
+  {
+    "name": "stegolophus",
+    "description": "Stegolophus fue un tireóforo del Jurásico tardío de Asia oriental, con 9 metros y dos hileras de placas romboidales vasculares asimétricas que se solapaban ligeramente. Esa asimetría sugiere función termorreguladora direccional según la orientación solar. Su cola presentaba cuatro espinas óseas reforzadas con queratina usadas como defensa activa.",
+    "image_url": "https://image.pollinations.ai/prompt/A%20paleo-illustration%20of%20a%20stegosaurid%20named%20Stegolophus%2C%20asymmetric%20back%20plates%2C%20Jurassic%20Asia%2C%20realistic%20museum%20diorama%20style%2C%20full%20body%2C%20neutral%20background%2C%20no%20text?width=512&height=512&nologo=true&seed=707"
+  },
+  {
+    "name": "ankyloverus",
+    "description": "Ankyloverus habitó los deltas fluviales del Cretácico tardío de Asia, con 6 metros y un escudo dorsal de osteodermos fusionados de hasta 5 cm de grosor. Su maza caudal ósea podía fracturar los pies de grandes terópodos de un solo golpe lateral. Análisis de desgaste dental revelan que seleccionaba plantas ricas en calcio, explicando la densidad excepcional de su armadura.",
+    "image_url": "https://image.pollinations.ai/prompt/A%20paleo-illustration%20of%20an%20ankylosaur%20named%20Ankyloverus%2C%20heavy%20armor%2C%20tail%20club%2C%20Cretaceous%20Asia%2C%20realistic%20museum%20diorama%20style%2C%20full%20body%2C%20neutral%20background%2C%20no%20text?width=512&height=512&nologo=true&seed=808"
+  },
+  {
+    "name": "pteroventus",
+    "description": "Pteroventus fue un pterosaurio del Cretácico temprano del Tethys europeo, con envergadura de 4 metros y cresta parietal laminada de función hidrodinámica. Sus mandíbulas sin dientes presentaban una bolsa gular extensible para almacenar peces vivos. Depósitos de la Formación Solnhofen preservan impresiones de la membrana alar con fibras de actinofibrilas.",
+    "image_url": "https://image.pollinations.ai/prompt/A%20paleo-illustration%20of%20a%20pterosaur%20named%20Pteroventus%2C%20large%20wingspan%2C%20coastal%20Cretaceous%2C%20fishing%2C%20realistic%20museum%20diorama%20style%2C%20full%20body%2C%20neutral%20background%2C%20no%20text?width=512&height=512&nologo=true&seed=909"
+  },
+  {
+    "name": "zorvexodon",
+    "description": "Zorvexodon fue un heterodontosáurido del Triásico tardío de Laurasia, con apenas 1.5 metros y tres tipos dentales distintos: incisivos, caninos y molares. Era omnívoro oportunista que alternaba frutos, insectos y pequeños vertebrados según la estación. Su versatilidad alimentaria lo hace uno de los linajes más exitosos del período, con amplia distribución fósil desde Europa hasta Asia.",
+    "image_url": "https://image.pollinations.ai/prompt/A%20paleo-illustration%20of%20a%20small%20heterodontosaurid%20named%20Zorvexodon%2C%20omnivore%2C%20Triassic%20Laurasia%2C%20realistic%20museum%20diorama%20style%2C%20full%20body%2C%20neutral%20background%2C%20no%20text?width=512&height=512&nologo=true&seed=1010"
+  }
+]
