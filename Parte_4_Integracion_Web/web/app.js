@@ -4,10 +4,11 @@
 const CFG = window.DINO_CONFIG || {};
 
 const PALEO_PROMPT = (name) => `
-Eres un paleontólogo. Describe en exactamente 2 frases en español el dinosaurio
-ficticio llamado "${name}". Usa convenciones reales (prefijos griegos/latinos
-para forma/tamaño/lugar; sufijos como -saurus, -raptor, -odon). Sé conciso y
-plausible.
+Eres un paleontólogo experto. Describe en 4 a 5 frases en español el dinosaurio
+ficticio llamado "${name}". Incluye: período geológico, región donde vivió,
+dieta, características físicas distintivas (tamaño, rasgos únicos) y un dato
+curioso sobre su comportamiento o adaptación. Usa terminología paleontológica
+real. No uses listas, solo prosa fluida.
 `.trim();
 
 // ============================================================

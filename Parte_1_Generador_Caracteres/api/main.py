@@ -17,6 +17,7 @@ import logging
 import logging.handlers
 import os
 import time
+import random
 import urllib.parse
 from pathlib import Path
 from typing import Any
@@ -199,6 +200,7 @@ def generate_image(req: ImageRequest) -> JSONResponse:
         "high detail, no text, no watermark."
     )
     encoded = urllib.parse.quote(prompt)
-    image_url = f"https://image.pollinations.ai/prompt/{encoded}?width=512&height=512&nologo=true&seed=42"
+    seed = random.randint(1, 999999)
+    image_url = f"https://image.pollinations.ai/prompt/{encoded}?width=512&height=512&nologo=true&seed={seed}"
     logger.info('"event":"image_request","name":"%s"', req.name)
     return JSONResponse({"image_url": image_url})
