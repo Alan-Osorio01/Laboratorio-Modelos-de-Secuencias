@@ -9,6 +9,6 @@ window.DINO_CONFIG = {
   OLLAMA_URL: "https://serpent-secular-distract.ngrok-free.dev",
   OLLAMA_MODEL: "gemma2:2b",
 
-  // Colab — modelo de difusión (pendiente Santiago)
-  DIFFUSION_URL: "https://REPLACE_ME.ngrok-free.app",
+  // Difusión via /image en la misma FastAPI — Pollinations.ai internamente
+  DIFFUSION_URL: "https://serpent-secular-distract.ngrok-free.dev",
 };

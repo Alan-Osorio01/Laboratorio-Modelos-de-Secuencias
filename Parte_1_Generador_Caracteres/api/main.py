@@ -17,6 +17,7 @@ import logging
 import logging.handlers
 import os
 import time
+import urllib.parse
 from pathlib import Path
 from typing import Any
 
@@ -178,3 +179,26 @@ async def ollama_proxy(request: Request) -> JSONResponse:
     except httpx.ConnectError:
         logger.error('"event":"ollama_unreachable","base":"%s"', OLLAMA_BASE)
         raise HTTPException(status_code=503, detail="Ollama no disponible en el host.")
+
+
+class ImageRequest(BaseModel):
+    name: str
+    description: str = ""
+
+
+@app.post("/image")
+def generate_image(req: ImageRequest) -> JSONResponse:
+    """Genera URL de imagen usando Pollinations.ai (sin GPU, sin cuenta extra).
+
+    El frontend apunta DIFFUSION_URL a esta misma API — un solo ngrok para todo.
+    """
+    prompt = (
+        f"A paleo-illustration of a dinosaur named {req.name}. "
+        f"{req.description} "
+        "Realistic museum diorama style, full body visible, neutral background, "
+        "high detail, no text, no watermark."
+    )
+    encoded = urllib.parse.quote(prompt)
+    image_url = f"https://image.pollinations.ai/prompt/{encoded}?width=512&height=512&nologo=true&seed=42"
+    logger.info('"event":"image_request","name":"%s"', req.name)
+    return JSONResponse({"image_url": image_url})

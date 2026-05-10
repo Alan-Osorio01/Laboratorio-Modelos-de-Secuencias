@@ -108,7 +108,7 @@ async function newDinosaur() {
     result.classList.remove("hidden");
 
     btn.textContent = "Generando imagen…";
-    status.textContent = "3/3 — generando imagen con difusión (Colab T4)";
+    status.textContent = "3/3 — generando imagen con difusión";
     const image_url = await fetchImage(name, description);
     const img = document.getElementById("result-image");
     img.src = image_url;
