@@ -1,0 +1,47 @@
+[
+  {
+    "name": "kryshanchisaurus",
+    "description": "*Krshyanchisaurus* es un dinosaurio herbívoro de tamaño mediano que se caracteriza por su robusto cuello y patas fuertes. Su pelaje grueso y coloraciones marrones y grises lo hacen destacar en los ambientes donde habitó.",
+    "model": "gemma2:2b"
+  },
+  {
+    "name": "shencosaurus",
+    "description": "*Shencosaurus* fue un dinosaurio herbívoro de tamaño mediano con una estructura ósea robusta y extremidades robustas, ideales para el desplazamiento por terrenos difíciles. Su dieta se basaba en la vegetación del ecosistema de su época, siendo presumiblemente omnipresente en la flora local.",
+    "model": "gemma2:2b"
+  },
+  {
+    "name": "picrosaurus",
+    "description": "*Picrosaurus** fue un dinosaurio pequeño, con una estructura corporal robusta y ágil, similar a los géneros de dinosaurios como el *Ceratosaurus*.  Su dieta se basaba principalmente en pequeños herbivoros, lo que sugiere un comportamiento similar al de los *Microceratops*.",
+    "model": "gemma2:2b"
+  },
+  {
+    "name": "arachenosaurus",
+    "description": "*Arachenosaurus* presenta una estructura ósea robusta y un cráneo robusto con una prominente cresta dorsal que se asemeja a la de un águila. Su dieta herbívora se evidencia en el largo esófago y las fuertes mandíbulas, adaptadas para masticar ramas y hojas de grandes tamaño.",
+    "model": "gemma2:2b"
+  },
+  {
+    "name": "sauchenosaurus",
+    "description": "*Sauchenosaurus** es un dinosaurio herbívoro de tamaño mediano que poseía una estructura ósea robusta y una dentición fuerte, ideal para masticar hojas de plantas grandes. Suelen ser más activos durante la noche y se mantienen en grupos familiares, con una dinámica social y de liderazgo bien definida.*",
+    "model": "gemma2:2b"
+  },
+  {
+    "name": "aratasaurus",
+    "description": "*Aratasaurus* es un dinosaurio herbívoro de tamaño mediano con una armadura robusta compuesta por placas óseas curvadas y prominentes en la parte dorsal del cuerpo.  Su característica más distintiva son las extremidades traseras largas y robustas que le permiten moverse con agilidad a través de terrenos áridos.",
+    "model": "gemma2:2b"
+  },
+  {
+    "name": "santrurias",
+    "description": "*Santrurias  remitente** era un dinosaurio herbívoro de tamaño mediano, con una estructura corporal robusta y patas robustas. Su largo cuello se extendía hacia delante y su cabeza estaba coronada por una cresta que podría indicar un comportamiento socialmente complejo.**",
+    "model": "gemma2:2b"
+  },
+  {
+    "name": "matinosaurus",
+    "description": "*El *Matinosaurus* presenta un cuerpo robusto y ágil, similar a un pequeño Tyrannosaurus rex. Sus dientes afilados y su mordisco potente sugieren un animal carnívoro que cazaba en grupos.* \n\n*Se caracteriza por una postura ligeramente inclinada hacia adelante, lo que sugiere un estilo de locomoción más rápido y agile que la mayoría de los dinosaurios herbívoros.*",
+    "model": "gemma2:2b"
+  },
+  {
+    "name": "aviroplesaurus",
+    "description": "*Aviroplesaurus* es un dinosaurio herbívoro de tamaño mediano, con patas largas y ágiles que le permiten moverse con facilidad en terrenos arcillosos. Su dieta se basaba principalmente en plantas arbóreos y lianas, como las que se encuentran en bosques tropicales del período Jurásico.",
+    "model": "gemma2:2b"
+  }
+]
