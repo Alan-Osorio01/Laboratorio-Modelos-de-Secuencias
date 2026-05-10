@@ -1,15 +1,14 @@
 // URLs públicas de ngrok. Editar y volver a desplegar cuando roten.
-// NO commitear este archivo con valores reales en producción — usar deploy_s3.sh
-// para inyectar via env vars o dejar placeholder en el repo.
+// Con plan free de ngrok hay una sola URL — el generador proxea Ollama internamente.
 
 window.DINO_CONFIG = {
-  // SageMaker — FastAPI del generador (Parte 1)
-  GENERATOR_URL: "https://REPLACE_ME.ngrok-free.app",
+  // SageMaker — FastAPI del generador (también proxea /api/generate a Ollama)
+  GENERATOR_URL: "https://serpent-secular-distract.ngrok-free.dev",
 
-  // SageMaker — Ollama
-  OLLAMA_URL: "https://REPLACE_ME.ngrok-free.app",
+  // OLLAMA_URL apunta a la misma URL — el FastAPI hace el proxy internamente
+  OLLAMA_URL: "https://serpent-secular-distract.ngrok-free.dev",
   OLLAMA_MODEL: "gemma2:2b",
 
-  // Colab — modelo de difusión
+  // Colab — modelo de difusión (pendiente Santiago)
   DIFFUSION_URL: "https://REPLACE_ME.ngrok-free.app",
 };

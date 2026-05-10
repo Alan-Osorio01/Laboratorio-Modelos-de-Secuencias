@@ -18,10 +18,13 @@ import logging.handlers
 import os
 import time
 from pathlib import Path
+from typing import Any
 
+import httpx
 import torch
 from fastapi import FastAPI, HTTPException, Request, Response
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
 from pydantic import BaseModel, Field
 
 from ..src.dataset import load_names
@@ -64,6 +67,9 @@ DEVICE = os.environ.get(
     "DEVICE",
     "cuda" if torch.cuda.is_available() else "cpu",
 )
+# Ollama corre en el mismo host (localhost:11434). El frontend llama a /api/generate
+# en esta misma API y nosotros hacemos el proxy internamente.
+OLLAMA_BASE = os.environ.get("OLLAMA_BASE", "http://localhost:11434")
 
 app = FastAPI(
     title="Dino Generator API",
@@ -154,3 +160,21 @@ def generate(req: GenerateRequest) -> GenerateResponse:
         raise HTTPException(status_code=500, detail="No se pudo generar nombres únicos.")
     logger.info('"event":"generate_ok","names":%s', names)
     return GenerateResponse(names=names)
+
+
+@app.post("/api/generate")
+async def ollama_proxy(request: Request) -> JSONResponse:
+    """Proxy transparente hacia Ollama en localhost:11434.
+
+    El plan free de ngrok da una sola URL — el frontend apunta todo
+    a esta API y este endpoint reenvía las peticiones de descripción a Ollama.
+    """
+    body: Any = await request.json()
+    logger.info('"event":"ollama_proxy","model":"%s"', body.get("model", "?"))
+    try:
+        async with httpx.AsyncClient(timeout=120) as client:
+            resp = await client.post(f"{OLLAMA_BASE}/api/generate", json=body)
+        return JSONResponse(content=resp.json(), status_code=resp.status_code)
+    except httpx.ConnectError:
+        logger.error('"event":"ollama_unreachable","base":"%s"', OLLAMA_BASE)
+        raise HTTPException(status_code=503, detail="Ollama no disponible en el host.")
