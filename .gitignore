@@ -23,6 +23,7 @@ data/generated/images/
 .env
 .env.*
 !.env.example
+!.env.aws.example
 
 # Editor
 .vscode/

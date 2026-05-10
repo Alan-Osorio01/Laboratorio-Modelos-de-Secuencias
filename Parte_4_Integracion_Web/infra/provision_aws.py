@@ -28,6 +28,23 @@ import boto3
 from botocore.exceptions import ClientError
 
 # ---------------------------------------------------------------------------
+# Cargar .env.aws desde la raíz del repo (credenciales de Academy)
+# ---------------------------------------------------------------------------
+_REPO_ROOT = Path(__file__).parent.parent.parent
+_ENV_AWS = _REPO_ROOT / ".env.aws"
+
+if _ENV_AWS.exists():
+    for _line in _ENV_AWS.read_text().splitlines():
+        _line = _line.strip()
+        if _line and not _line.startswith("#") and "=" in _line:
+            _key, _, _val = _line.partition("=")
+            if _val and _key not in os.environ:
+                os.environ[_key.strip()] = _val.strip()
+    print(f"[credentials] cargadas desde {_ENV_AWS}")
+else:
+    print(f"[credentials] {_ENV_AWS} no encontrado — usando credenciales del entorno o ~/.aws/credentials")
+
+# ---------------------------------------------------------------------------
 # Configuración
 # ---------------------------------------------------------------------------
 REGION = os.environ.get("AWS_REGION", "us-east-1")
@@ -231,15 +248,30 @@ def _write_config_js(cf_domain: str) -> None:
 
 
 def _save_outputs(s3_url: str, cf_id: str, cf_domain: str) -> None:
-    """Guarda los IDs en un archivo .env.aws para reutilizar en el próximo deploy."""
-    out_path = Path(__file__).parent / ".env.aws"
-    out_path.write_text(
-        f"S3_BUCKET={BUCKET_NAME}\n"
-        f"CLOUDFRONT_DISTRIBUTION={cf_id}\n"
-        f"CLOUDFRONT_DOMAIN=https://{cf_domain}\n"
-        f"S3_WEBSITE={s3_url}\n"
-    )
-    _log(f"IDs guardados en {out_path} (no commitear)")
+    """Actualiza .env.aws en la raíz del repo con los IDs de los recursos creados."""
+    env_path = _REPO_ROOT / ".env.aws"
+
+    # Leer líneas existentes (credenciales + lo que ya había)
+    existing: dict[str, str] = {}
+    if env_path.exists():
+        for line in env_path.read_text().splitlines():
+            line = line.strip()
+            if line and not line.startswith("#") and "=" in line:
+                k, _, v = line.partition("=")
+                existing[k.strip()] = v.strip()
+
+    # Actualizar solo los IDs de infraestructura
+    existing["S3_BUCKET"] = BUCKET_NAME
+    existing["CLOUDFRONT_DISTRIBUTION"] = cf_id
+    existing["CLOUDFRONT_DOMAIN"] = f"https://{cf_domain}"
+    existing["S3_WEBSITE"] = s3_url
+
+    # Reescribir preservando credenciales
+    lines = ["# Generado por provision_aws.py — no commitear\n"]
+    for k, v in existing.items():
+        lines.append(f"{k}={v}\n")
+    env_path.write_text("".join(lines))
+    _log(f"IDs de infraestructura guardados en {env_path}")
 
 
 # ---------------------------------------------------------------------------
