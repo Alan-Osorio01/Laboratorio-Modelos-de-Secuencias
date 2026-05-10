@@ -1,0 +1,56 @@
+============================================================
+  ARRANQUE RÁPIDO — Lab Modelos de Secuencias
+============================================================
+
+SITIO WEB (siempre activo, no requiere nada):
+  http://frontend-dino-lab.s3-website-us-east-1.amazonaws.com
+
+------------------------------------------------------------
+APAGAR (para no gastar créditos)
+------------------------------------------------------------
+1. AWS Console → SageMaker → Notebook instances
+2. Seleccionar la instancia → Stop
+
+El volumen EBS persiste: Docker, modelos Ollama y best_model.pt
+siguen ahí para el próximo arranque.
+
+------------------------------------------------------------
+ENCENDER
+------------------------------------------------------------
+1. AWS Console → SageMaker → Notebook instances → Start
+   (esperar ~3 minutos a que el lifecycle script termine)
+
+2. Abrir terminal en el notebook y correr:
+
+   bash Parte_2_Ollama_Descripciones/infra/ollama_docker_run.sh
+   bash Parte_2_Ollama_Descripciones/infra/start_generator_api.sh
+   nohup /home/ec2-user/ngrok http \
+     --domain=serpent-secular-distract.ngrok-free.dev 8000 \
+     > /home/ec2-user/SageMaker/logs/ngrok.log 2>&1 &
+
+3. Verificar que todo responde:
+
+   curl http://localhost:8000/health
+
+   Debe retornar: {"status":"ok","cell_type":"gru","device":"cpu"}
+
+4. El sitio web ya está funcionando. No hay nada más que hacer.
+
+------------------------------------------------------------
+NOTAS
+------------------------------------------------------------
+- El dominio ngrok es estático: serpent-secular-distract.ngrok-free.dev
+  No hay que actualizar config.js ni redesplegar S3 nunca.
+
+- Las credenciales de AWS Academy rotan cada ~4 horas.
+  Solo importa si necesitas redesplegar a S3. En ese caso:
+    1. Portal Academy → AWS Details → copiar las 3 variables
+    2. Pegarlas en .env.aws
+    3. set -a && source .env.aws && set +a
+    4. S3_BUCKET=frontend-dino-lab bash Parte_4_Integracion_Web/web/deploy_s3.sh
+
+- Logs útiles:
+    FastAPI:  tail -f /home/ec2-user/SageMaker/logs/generator_api.log
+    ngrok:    tail -f /home/ec2-user/SageMaker/logs/ngrok.log
+
+============================================================
