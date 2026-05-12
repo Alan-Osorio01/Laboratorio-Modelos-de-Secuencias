@@ -45,10 +45,15 @@ async function loadExamples() {
 // ============================================================
 // Llamadas individuales a cada ngrok
 // ============================================================
+const NGROK_HEADERS = {
+  "Content-Type": "application/json",
+  "ngrok-skip-browser-warning": "true",
+};
+
 async function fetchName() {
   const res = await fetch(`${CFG.GENERATOR_URL}/generate`, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers: NGROK_HEADERS,
     body: JSON.stringify({ n: 1, temperature: 1.0, top_p: 0.9 }),
   });
   if (!res.ok) throw new Error(`generador: HTTP ${res.status}`);
@@ -59,7 +64,7 @@ async function fetchName() {
 async function fetchDescription(name) {
   const res = await fetch(`${CFG.OLLAMA_URL}/api/generate`, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers: NGROK_HEADERS,
     body: JSON.stringify({
       model: CFG.OLLAMA_MODEL,
       prompt: PALEO_PROMPT(name),
@@ -74,7 +79,7 @@ async function fetchDescription(name) {
 async function fetchImage(name, description) {
   const res = await fetch(`${CFG.DIFFUSION_URL}/image`, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers: NGROK_HEADERS,
     body: JSON.stringify({ name, description }),
   });
   if (!res.ok) throw new Error(`difusión: HTTP ${res.status}`);
