@@ -25,7 +25,7 @@ ENCENDER
    bash Parte_2_Ollama_Descripciones/infra/ollama_docker_run.sh
    bash Parte_2_Ollama_Descripciones/infra/start_generator_api.sh
    nohup /home/ec2-user/SageMaker/ngrok http \
-     --domain=serpent-secular-distract.ngrok-free.dev 8000 \
+     --url=serpent-secular-distract.ngrok-free.dev 8000 \
      > /home/ec2-user/SageMaker/logs/ngrok.log 2>&1 &
 
    NOTA: si ngrok dice "not found", descargarlo de nuevo (no persiste fuera de /SageMaker/):
