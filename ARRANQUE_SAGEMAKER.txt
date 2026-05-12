@@ -24,9 +24,15 @@ ENCENDER
 
    bash Parte_2_Ollama_Descripciones/infra/ollama_docker_run.sh
    bash Parte_2_Ollama_Descripciones/infra/start_generator_api.sh
-   nohup /home/ec2-user/ngrok http \
+   nohup /home/ec2-user/SageMaker/ngrok http \
      --domain=serpent-secular-distract.ngrok-free.dev 8000 \
      > /home/ec2-user/SageMaker/logs/ngrok.log 2>&1 &
+
+   NOTA: si ngrok dice "not found", descargarlo de nuevo (no persiste fuera de /SageMaker/):
+   curl -sSL https://bin.equinox.io/c/bNyj1mQVY4c/ngrok-v3-stable-linux-amd64.tgz \
+     | tar -xz -C /home/ec2-user/SageMaker/
+   /home/ec2-user/SageMaker/ngrok config add-authtoken TU_TOKEN_NGROK
+   (luego volver a correr el nohup de arriba)
 
 3. Verificar que todo responde:
 
